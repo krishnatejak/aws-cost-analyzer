@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify
-from backend.cost_analyzer import CostAnalyzer
-from backend.utils.auth import require_auth
+from cost_analyzer import CostAnalyzer
+from utils.auth import require_auth
 
 cost_routes = Blueprint('cost_routes', __name__)
 cost_analyzer = CostAnalyzer()
