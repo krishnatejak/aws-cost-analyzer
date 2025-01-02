@@ -10,8 +10,6 @@ services:
       - FLASK_ENV=development
     volumes:
       - ./backend:/app
-    networks:
-      - app-network
 
   frontend:
     build:
@@ -21,9 +19,3 @@ services:
       - "80:80"
     depends_on:
       - backend
-    networks:
-      - app-network
-
-networks:
-  app-network:
-    driver: bridge
