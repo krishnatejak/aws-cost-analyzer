@@ -1,9 +1,9 @@
 from flask import Blueprint, jsonify
-from cost_analyzer import CostAnalyzer
+from cost_analyzer import AWSCostAnalyzer
 from utils.auth import require_auth
 
 cost_routes = Blueprint('cost_routes', __name__)
-cost_analyzer = CostAnalyzer()
+cost_analyzer = AWSCostAnalyzer()
 
 @cost_routes.route('/api/costs/overview', methods=['GET'])
 @require_auth
