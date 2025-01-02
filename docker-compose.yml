@@ -4,10 +4,14 @@ services:
   backend:
     build: ./backend
     restart: unless-stopped
+    ports:
+      - "5000:5000"
     environment:
       - AWS_DEFAULT_REGION=ap-south-1
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - JWT_SECRET=${JWT_SECRET}
+      - PYTHONPATH=/app
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
       interval: 30s
