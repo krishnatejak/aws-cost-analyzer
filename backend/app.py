@@ -1,49 +1,17 @@
-from flask import Flask, jsonify
+from flask import Flask
 from flask_cors import CORS
-from werkzeug.middleware.proxy_fix import ProxyFix
-from config import Config
 from routes import init_routes
-from utils.logger import setup_logger
-from utils.middleware import RequestLoggingMiddleware
-import boto3
-import os
+from config import Config
 
-# Initialize logger
-logger = setup_logger(__name__, Config.LOG_LEVEL)
+app = Flask(__name__)
+CORS(app)
+app.config.from_object(Config)
 
-def create_app():
-    app = Flask(__name__)
-    CORS(app)
-    
-    # Add middleware
-    app.wsgi_app = ProxyFix(app.wsgi_app)
-    app.wsgi_app = RequestLoggingMiddleware(app.wsgi_app)
-    
-    # Load configuration
-    app.config.from_object(Config)
-    
-    # Initialize AWS session
-    if app.config['AWS_PROFILE']:
-        boto3.setup_default_session(profile_name=app.config['AWS_PROFILE'])
-    
-    # Register routes
-    init_routes(app)
-    
-    # Add health check endpoint
-    @app.route('/api/v1/health')
-    def health_check():
-        return jsonify({
-            'status': 'healthy',
-            'version': '1.0.0',
-            'aws_configured': bool(boto3.Session().get_credentials())
-        })
-    
-    return app
+init_routes(app)
+
+@app.route('/health')
+def health_check():
+    return {'status': 'healthy'}
 
 if __name__ == '__main__':
-    app = create_app()
-    app.run(
-        host='0.0.0.0',
-        port=int(os.getenv('PORT', 5000)),
-        debug=Config.DEBUG
-    )
+    app.run(host='0.0.0.0', port=5000)
