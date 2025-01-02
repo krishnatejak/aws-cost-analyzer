@@ -1,8 +1,10 @@
-from flask import Flask
+from flask import Flask, jsonify
 from flask_cors import CORS
+from werkzeug.middleware.proxy_fix import ProxyFix
 from config import Config
 from routes import init_routes
 from utils.logger import setup_logger
+from utils.middleware import RequestLoggingMiddleware
 import boto3
 import os
 
@@ -13,6 +15,10 @@ def create_app():
     app = Flask(__name__)
     CORS(app)
     
+    # Add middleware
+    app.wsgi_app = ProxyFix(app.wsgi_app)
+    app.wsgi_app = RequestLoggingMiddleware(app.wsgi_app)
+    
     # Load configuration
     app.config.from_object(Config)
     
@@ -22,6 +28,15 @@ def create_app():
     
     # Register routes
     init_routes(app)
+    
+    # Add health check endpoint
+    @app.route('/api/v1/health')
+    def health_check():
+        return jsonify({
+            'status': 'healthy',
+            'version': '1.0.0',
+            'aws_configured': bool(boto3.Session().get_credentials())
+        })
     
     return app
 
