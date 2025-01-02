@@ -9,8 +9,8 @@ const api = axios.create({
 
 export const getCostOverview = () => api.get('/cost/overview');
 export const getServiceCosts = (service) => api.get(`/cost/${service}`);
-export const getEC2Analysis = () => api.get('/services/ec2/instances');
-export const getRDSAnalysis = () => api.get('/services/rds/instances');
+export const getEC2Analysis = () => api.get('/services/ec2');
+export const getRDSAnalysis = () => api.get('/services/rds');
 export const getCostRecommendations = () => api.get('/optimization/recommendations');
-export const getSavingsPlan = () => api.get('/optimization/savings-plan');
+export const getSavingsPlan = () => api.get('/optimization/overview');
 export const getCostTrends = (timeRange) => api.get('/cost/trends', { params: { timeRange } });
