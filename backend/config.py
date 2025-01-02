@@ -4,12 +4,16 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class Config:
+    # AWS Configuration
     AWS_REGION = os.getenv('AWS_REGION', 'us-east-1')
-    AWS_PROFILE = os.getenv('AWS_PROFILE', 'default')
+    AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+    
+    # Application Configuration
     FLASK_ENV = os.getenv('FLASK_ENV', 'development')
     DEBUG = os.getenv('DEBUG', 'True') == 'True'
     LOG_LEVEL = os.getenv('LOG_LEVEL', 'INFO')
-    JWT_SECRET = os.getenv('JWT_SECRET', 'your-secret-key-here')
+    JWT_SECRET = os.getenv('JWT_SECRET')
     
     # API Configuration
     API_PREFIX = '/api/v1'
