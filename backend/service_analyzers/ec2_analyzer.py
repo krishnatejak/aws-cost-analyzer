@@ -1,43 +1,45 @@
-from typing import Dict, List
 import boto3
+import os
 
 class EC2Analyzer:
     def __init__(self):
-        self.ec2 = boto3.client('ec2')
-        self.pricing = boto3.client('pricing')
+        self.ec2 = boto3.client('ec2',
+            aws_access_key_id=os.environ.get('AWS_ACCESS_KEY_ID'),
+            aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY'),
+            region_name=os.environ.get('AWS_REGION', 'us-east-1')
+        )
+        self.cloudwatch = boto3.client('cloudwatch')
 
-    def analyze_instances(self) -> Dict:
-        instances = self._get_all_instances()
-        return {
-            'total_instances': len(instances),
-            'running_instances': len([i for i in instances if i['State']['Name'] == 'running']),
-            'stopped_instances': len([i for i in instances if i['State']['Name'] == 'stopped']),
-            'instance_types': self._get_instance_type_distribution(instances),
-            'recommendations': self._generate_recommendations(instances)
+    def analyze(self):
+        instances = self.ec2.describe_instances()
+        analysis = {
+            'total_instances': 0,
+            'running_instances': 0,
+            'stopped_instances': 0,
+            'instance_types': {},
+            'instances': []
         }
 
-    def _get_all_instances(self) -> List:
-        response = self.ec2.describe_instances()
-        instances = []
-        for reservation in response['Reservations']:
-            instances.extend(reservation['Instances'])
-        return instances
+        for reservation in instances['Reservations']:
+            for instance in reservation['Instances']:
+                analysis['total_instances'] += 1
+                instance_state = instance['State']['Name']
+                instance_type = instance['InstanceType']
 
-    def _get_instance_type_distribution(self, instances: List) -> Dict:
-        distribution = {}
-        for instance in instances:
-            instance_type = instance['InstanceType']
-            distribution[instance_type] = distribution.get(instance_type, 0) + 1
-        return distribution
+                if instance_state == 'running':
+                    analysis['running_instances'] += 1
+                elif instance_state == 'stopped':
+                    analysis['stopped_instances'] += 1
 
-    def _generate_recommendations(self, instances: List) -> List:
-        recommendations = []
-        for instance in instances:
-            if instance['State']['Name'] == 'stopped':
-                recommendations.append({
-                    'instance_id': instance['InstanceId'],
-                    'type': 'termination_candidate',
-                    'message': f'Instance {instance["InstanceId"]} has been stopped. Consider terminating if not needed.'
-                })
-            # Add more recommendation logic here
-        return recommendations
+                analysis['instance_types'][instance_type] = \
+                    analysis['instance_types'].get(instance_type, 0) + 1
+
+                instance_data = {
+                    'id': instance['InstanceId'],
+                    'type': instance_type,
+                    'state': instance_state,
+                    'launch_time': instance.get('LaunchTime', '').isoformat()
+                }
+                analysis['instances'].append(instance_data)
+
+        return analysis
