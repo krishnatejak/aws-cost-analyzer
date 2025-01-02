@@ -59,8 +59,8 @@ A comprehensive tool for analyzing AWS costs across services with AI-powered rec
    - ReadOnlyAccess for services being analyzed
 
 2. Local Development:
-   - Python 3.9+
-   - Node.js 16+
+   - Python 3.11+
+   - Node.js 18+
    - Docker and Docker Compose (optional)
 
 ## Installation
@@ -85,8 +85,8 @@ docker-compose up --build
 ```
 
 The application will be available at:
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:5000
+- Web UI: http://localhost:80
+- Backend API: http://localhost:80/api
 
 ### Manual Setup
 
@@ -103,8 +103,8 @@ pip install -r requirements.txt
 # Configure AWS credentials
 aws configure
 
-# Start the backend server
-python app.py
+# Start the backend server with Gunicorn
+gunicorn --bind 0.0.0.0:5000 --workers 4 --threads 2 --worker-class gevent app:app
 ```
 
 2. Frontend Setup:
@@ -226,7 +226,7 @@ Create a `.env` file with the following variables:
 # AWS Configuration
 AWS_ACCESS_KEY_ID=your_access_key
 AWS_SECRET_ACCESS_KEY=your_secret_key
-AWS_REGION=us-east-1
+AWS_REGION=ap-south-1
 AWS_PROFILE=default
 
 # Backend Configuration
@@ -235,8 +235,18 @@ DEBUG=True
 LOG_LEVEL=INFO
 
 # Frontend Configuration
-REACT_APP_API_URL=http://localhost:5000/api/v1
+REACT_APP_API_URL=http://localhost/api/v1
 ```
+
+## Security Features
+
+- Multi-stage Docker builds for minimal attack surface
+- Non-root user execution in containers
+- Environment-based configuration
+- Regular dependency updates
+- Health checks for all services
+- Secure python virtual environment
+- Optimized Gunicorn worker configuration
 
 ## License
 
