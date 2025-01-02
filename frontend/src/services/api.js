@@ -11,3 +11,6 @@ export const getCostOverview = () => api.get('/cost/overview');
 export const getCostsByService = (service) => api.get(`/services/${service}/costs`);
 export const getEC2Analysis = () => api.get('/services/ec2/instances');
 export const getRDSAnalysis = () => api.get('/services/rds/instances');
+export const getCostRecommendations = () => api.get('/optimization/recommendations');
+export const getSavingsPlan = () => api.get('/optimization/savings-plan');
+export const getCostTrends = (timeRange) => api.get('/cost/trends', { params: { timeRange } });
