@@ -1,7 +1,7 @@
 from functools import wraps
 from flask import request, jsonify
 import jwt
-from ..config import Config
+from config import Config
 
 def require_auth(f):
     @wraps(f)
