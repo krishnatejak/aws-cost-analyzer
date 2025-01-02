@@ -1,5 +1,5 @@
 from flask import Blueprint
-from routes.cost_routes import cost_routes
+from .cost_routes import cost_routes
 
 def init_routes(app):
     app.register_blueprint(cost_routes)
