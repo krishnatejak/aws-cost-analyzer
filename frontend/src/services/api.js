@@ -8,6 +8,7 @@ const api = axios.create({
 });
 
 export const getCostOverview = () => api.get('/cost/overview');
+export const getCostsByService = (service) => api.get(`/cost/${service}`);
 export const getServiceCosts = (service) => api.get(`/cost/${service}`);
 export const getEC2Analysis = () => api.get('/services/ec2');
 export const getRDSAnalysis = () => api.get('/services/rds');
