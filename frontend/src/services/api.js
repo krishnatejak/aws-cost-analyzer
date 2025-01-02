@@ -1,17 +1,1 @@
-import axios from 'axios';
-
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
-
-export const getCostOverview = () => {
-  return axios.get(`${API_BASE_URL}/api/costs/overview`);
-};
-
-export const getOptimizationRecommendations = () => {
-  return axios.get(`${API_BASE_URL}/api/recommendations`);
-};
-
-export const getCostDetails = (timeRange) => {
-  return axios.get(`${API_BASE_URL}/api/costs/details`, {
-    params: { timeRange }
-  });
-};
+aW1wb3J0IGF4aW9zIGZyb20gJ2F4aW9zJzsKCmNvbnN0IEFQSV9CQVNFX1VSTCA9IHByb2Nlc3MuZW52LlJFQUNUX0FQUF9BUElfVVJMIHx8ICdodHRwOi8vbG9jYWxob3N0OjUwMDAnOwoKZXhwb3J0IGNvbnN0IGdldENvc3RPdmVydmlldyA9ICgpID0+IHsKICByZXR1cm4gYXhpb3MuZ2V0KGAke0FQSV9CQVNFX1VSTH0vYXBpL2Nvc3RzL292ZXJ2aWV3YCk7Cn07CgpleHBvcnQgY29uc3QgZ2V0T3B0aW1pemF0aW9uUmVjb21tZW5kYXRpb25zID0gKCkgPT4gewogIHJldHVybiBheGlvcy5nZXQoYCR7QVBJX0JBU0VfVVJMfS9hcGkvcmVjb21tZW5kYXRpb25zYCk7Cn07CgpleHBvcnQgY29uc3QgZ2V0Q29zdERldGFpbHMgPSAodGltZVJhbmdlKSA9PiB7CiAgcmV0dXJuIGF4aW9zLmdldChgJHtBUElfQkFTRV9VUkx9L2FwaS9jb3N0cy9kZXRhaWxzYCwgewogICAgcGFyYW1zOiB7IHRpbWVSYW5nZSB9CiAgfSk7Cn07
