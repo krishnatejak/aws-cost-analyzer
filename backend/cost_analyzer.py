@@ -10,6 +10,59 @@ class AWSCostAnalyzer:
         self.ec2 = boto3.client('ec2')
         self.rds = boto3.client('rds')
     
+    def get_cost_overview(self):
+        # Get cost data for the last 30 days
+        end_date = datetime.now().strftime('%Y-%m-%d')
+        start_date = (datetime.now() - timedelta(days=30)).strftime('%Y-%m-%d')
+        
+        response = self.ce_client.get_cost_and_usage(
+            TimePeriod={
+                'Start': start_date,
+                'End': end_date
+            },
+            Granularity='DAILY',
+            Metrics=['UnblendedCost'],
+            GroupBy=[{'Type': 'DIMENSION', 'Key': 'SERVICE'}]
+        )
+        
+        # Process the data
+        overview = {
+            'total_cost': 0,
+            'services': [],
+            'daily_costs': []
+        }
+        
+        for result in response['ResultsByTime']:
+            daily_cost = 0
+            for group in result['Groups']:
+                cost = float(group['Metrics']['UnblendedCost']['Amount'])
+                daily_cost += cost
+                
+                # Add to services list if not exists
+                service = group['Keys'][0]
+                service_found = False
+                for s in overview['services']:
+                    if s['name'] == service:
+                        s['cost'] += cost
+                        service_found = True
+                        break
+                if not service_found:
+                    overview['services'].append({
+                        'name': service,
+                        'cost': cost
+                    })
+            
+            overview['daily_costs'].append({
+                'date': result['TimePeriod']['Start'],
+                'cost': daily_cost
+            })
+            overview['total_cost'] += daily_cost
+        
+        # Sort services by cost
+        overview['services'].sort(key=lambda x: x['cost'], reverse=True)
+        
+        return overview
+    
     def get_cost_and_usage(self, start_date=None, end_date=None):
         if not start_date:
             start_date = (datetime.now() - timedelta(days=30)).strftime('%Y-%m-%d')

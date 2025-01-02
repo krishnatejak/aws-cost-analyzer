@@ -9,6 +9,7 @@ class Config:
     FLASK_ENV = os.getenv('FLASK_ENV', 'development')
     DEBUG = os.getenv('DEBUG', 'True') == 'True'
     LOG_LEVEL = os.getenv('LOG_LEVEL', 'INFO')
+    JWT_SECRET = os.getenv('JWT_SECRET', 'your-secret-key-here')
     
     # API Configuration
     API_PREFIX = '/api/v1'
