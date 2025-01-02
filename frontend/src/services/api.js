@@ -1,24 +1,12 @@
 import axios from 'axios';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+const API_BASE_URL = 'http://localhost:5050/api/v1';
 
 const api = axios.create({
-  baseURL: API_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  baseURL: API_BASE_URL,
+  timeout: 10000,
 });
 
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
-
-export const getCostOverview = () => api.get('/api/costs/overview');
-export const getCostsByService = () => api.get('/api/costs/by-service');
-export const getCostRecommendations = () => api.get('/api/costs/recommendations');
-
-export default api;
+export const getCostOverview = () => api.get('/cost/overview');
+export const getEC2Analysis = () => api.get('/services/ec2/instances');
+export const getRDSAnalysis = () => api.get('/services/rds/instances');

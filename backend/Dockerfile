@@ -9,4 +9,4 @@ COPY . .
 
 EXPOSE 5050
 
-CMD ["gunicorn", "--bind", "0.0.0.0:5050", "--workers", "4", "app:app"]
+CMD ["python", "-m", "flask", "run", "--host=0.0.0.0", "--port=5050"]
