@@ -1,20 +1,34 @@
-from flask import Flask, jsonify
-from cost_analyzer import AWSCostAnalyzer
-from recommendation_engine import RecommendationEngine
+from flask import Flask
+from flask_cors import CORS
+from config import Config
+from routes import init_routes
+from utils.logger import setup_logger
+import boto3
+import os
 
-app = Flask(__name__)
+# Initialize logger
+logger = setup_logger(__name__, Config.LOG_LEVEL)
 
-@app.route('/api/cost-data')
-def get_cost_data():
-    analyzer = AWSCostAnalyzer()
-    data = analyzer.get_cost_and_usage()
-    return jsonify(data)
-
-@app.route('/api/recommendations')
-def get_recommendations():
-    engine = RecommendationEngine()
-    recommendations = engine.generate_recommendations()
-    return jsonify(recommendations)
+def create_app():
+    app = Flask(__name__)
+    CORS(app)
+    
+    # Load configuration
+    app.config.from_object(Config)
+    
+    # Initialize AWS session
+    if app.config['AWS_PROFILE']:
+        boto3.setup_default_session(profile_name=app.config['AWS_PROFILE'])
+    
+    # Register routes
+    init_routes(app)
+    
+    return app
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app = create_app()
+    app.run(
+        host='0.0.0.0',
+        port=int(os.getenv('PORT', 5000)),
+        debug=Config.DEBUG
+    )
