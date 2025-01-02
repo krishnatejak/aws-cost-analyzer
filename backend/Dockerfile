@@ -2,6 +2,12 @@ FROM python:3.11-slim AS builder
 
 WORKDIR /app
 
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    gcc \
+    python3-dev \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
@@ -10,6 +16,7 @@ FROM python:3.11-slim
 WORKDIR /app
 
 COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
+COPY --from=builder /usr/local/bin/gunicorn /usr/local/bin/gunicorn
 
 COPY . .
 
@@ -23,7 +30,5 @@ ENV AWS_DEFAULT_REGION=ap-south-1
 ENV PYTHONUNBUFFERED=1
 
 EXPOSE 5000
-
-HEALTHCHECK CMD curl --fail http://localhost:5000/health || exit 1
 
 CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "4", "--threads", "2", "--worker-class", "gevent", "wsgi:app"]
