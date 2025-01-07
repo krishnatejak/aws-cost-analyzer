@@ -1,19 +1,20 @@
 from flask import Flask
 from flask_cors import CORS
-from routes import init_routes
-from config import Config
+from src.routes.cost_routes import cost_routes
+from src.routes.optimization_routes import optimization_routes
 
 def create_app():
     app = Flask(__name__)
     CORS(app)
-    app.config.from_object(Config)
-
-    init_routes(app)
-
+    
+    # Register blueprints
+    app.register_blueprint(cost_routes)
+    app.register_blueprint(optimization_routes)
+    
     @app.route('/health')
     def health_check():
         return {'status': 'healthy'}
-
+    
     return app
 
 app = create_app()

@@ -7,17 +7,30 @@ import useCostData from './hooks/useCostData';
 const App = () => {
   const { overview, serviceBreakdown, recommendations, loading, error } = useCostData();
 
-  if (loading) return <div className="p-4">Loading...</div>;
-  if (error) return <div className="p-4 text-red-500">Error: {error}</div>;
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-lg">Loading AWS cost data...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-red-500 text-lg">
+          Error: {typeof error === 'string' ? error : 'Failed to load data'}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-6">AWS Cost Analysis</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6">
         <CostOverview data={overview} />
         <ServiceBreakdown data={serviceBreakdown} />
-      </div>
-      <div className="mt-6">
         <Recommendations recommendations={recommendations} />
       </div>
     </div>

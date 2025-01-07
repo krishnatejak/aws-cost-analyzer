@@ -1,9 +1,5 @@
-flask==2.3.3
-gevent==23.9.1
-boto3==1.28.44
+boto3==1.26.137
+Flask==2.3.2
 python-dotenv==1.0.0
-Flask-Cors==4.0.0
-requests==2.31.0
-PyJWT==2.8.0
-pandas>=1.4.2
-numpy>=1.22.3
+flask-cors==4.0.0
+PyJWT==2.7.0
